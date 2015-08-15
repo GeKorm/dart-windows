@@ -31,25 +31,25 @@ html {
 
 @-webkit-keyframes overTop {
   from   { opacity: 0; transform: scale(0.5); }
-  60%  { opacity: 0; transform: scale(0.9); }
+  60%  { opacity: 0; transform: scale(0.6); }
   to { opacity: 100%; transform: scale(1); }
 }
 
 @-moz-keyframes overTop {
   from   { opacity: 0; transform: scale(0.5); }
-  60%  { opacity: 0; transform: scale(0.9); }
+  60%  { opacity: 0; transform: scale(0.6); }
   to { opacity: 100%; transform: scale(1); }
 }
 
 @-keyframes overTop {
   from   { opacity: 0; transform: scale(0.5); }
-  60%  { opacity: 0; transform: scale(0.9); }
+  60%  { opacity: 0; transform: scale(0.6); }
   to { opacity: 100%; transform: scale(1); }
 }
 
 @-ms-keyframes overTop {
   from   { opacity: 0; transform: scale(0.5); }
-  60%  { opacity: 0; transform: scale(0.9); }
+  60%  { opacity: 0; transform: scale(0.6); }
   to { opacity: 100%; transform: scale(1); }
 }
 
