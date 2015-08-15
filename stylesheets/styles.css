@@ -1,22 +1,62 @@
-.outer {
-    background: #0084c5;
-    background: -moz-linear-gradient(45deg, #0084c5 0, #0489c3 36%, #30cabf 66%, #2fbcb2 100%);
-    background: -webkit-gradient(linear, left bottom, right top, color-stop(0, #0084c5), color-stop(36%, #0489c3), color-stop(66%, #30cabf), color-stop(100%, #2fbcb2));
-    background: -webkit-linear-gradient(45deg, #0084c5 0, #0489c3 36%, #30cabf 66%, #2fbcb2 100%);
-    background: -o-linear-gradient(45deg, #0084c5 0, #0489c3 36%, #30cabf 66%, #2fbcb2 100%);
-    background: -ms-linear-gradient(45deg, #0084c5 0, #0489c3 36%, #30cabf 66%, #2fbcb2 100%);
-    background: linear-gradient(45deg, #0084c5 0, #0489c3 36%, #30cabf 66%, #2fbcb2 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0084c5', endColorstr='#2fbcb2', GradientType=1);
-    min-height: 100vh;
-}
 .inner {
     padding-top: 40px;
 }
+html {
+    background: #0084c5;      
+    background: -moz-linear-gradient(45deg, #0084c5 0, #0489c3 36%, #30cabf 66%, #2fbcb2 100%);      
+    background: -webkit-gradient(linear, left bottom, right top, color-stop(0, #0084c5), color-stop(36%, #0489c3), 
+    color-stop(66%, #30cabf), color-stop(100%, #2fbcb2));      
+    background: -webkit-linear-gradient(45deg, #0084c5 0, #0489c3 36%, #30cabf 66%, #2fbcb2 100%);
+    background: -o-linear-gradient(45deg, #0084c5 0, #0489c3 36%, #30cabf 66%, #2fbcb2 100%);
+    background: -ms-linear-gradient(45deg, #0084c5 0, #0489c3 36%, #30cabf 66%, #2fbcb2 100%);      
+    background: linear-gradient(45deg, #0084c5 0, #0489c3 36%, #30cabf 66%, #2fbcb2 100%) center center fixed;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0084c5', endColorstr='#2fbcb2', GradientType=1);
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.screenshot {
+    width: 90%;            
+    max-width: 499px;
+    max-height: 387px;
+    margin: 50px auto 15px auto;    
+    box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.2);
+    -webkit-animation: overTop 1s forwards;
+    -moz-animation: overTop 1s forwards;
+    -ms-animation: overTop 1s forwards;
+    animation: overTop 1s infinite;
+}
+
+@-webkit-keyframes overTop {
+  from   { opacity: 0; }
+  60%  { opacity: 0; }
+  to { opacity: 100%; }
+}
+
+@-moz-keyframes overTop {
+  from   { opacity: 0; }
+  60%  { opacity: 0; }
+  to { opacity: 100%; }
+}
+
+@-keyframes overTop {
+  from   { opacity: 0; }
+  60%  { opacity: 0; }
+  to { opacity: 100%; }
+}
+
+@-ms-keyframes overTop {
+  from   { opacity: 0; }
+  60%  { opacity: 0; }
+  to { opacity: 100%; }
+}
+
 html, body {
     margin: 0;
     padding: 0;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
-    height: 100vh;
 }
 h1 {
     margin-top: 0;
