@@ -1,0 +1,3 @@
+Dart is an open-source, scalable programming language, with robust libraries and runtimes, for building web, server, and mobile apps.
+
+This installer is not endorsed by the Dart project authors and contributors.

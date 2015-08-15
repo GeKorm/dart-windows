@@ -1,0 +1,5 @@
+Visit the dartlang.org to learn more about the language, tools, getting started, and more.
+
+Browse pub.dartlang.org for more packages and libraries contributed by the community and the Dart team.
+
+To update Dart using this installer, visit https://gekorm.com/dart-installer
