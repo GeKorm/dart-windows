@@ -30,27 +30,27 @@ html {
 }
 
 @-webkit-keyframes overTop {
-  from   { opacity: 0; }
-  60%  { opacity: 0; }
-  to { opacity: 100%; }
+  from   { opacity: 0; transform: translateZ(-100px); }
+  60%  { opacity: 0; transform: translateZ(0); }
+  to { opacity: 100%; transform: translateZ(0); }
 }
 
 @-moz-keyframes overTop {
-  from   { opacity: 0; }
-  60%  { opacity: 0; }
-  to { opacity: 100%; }
+  from   { opacity: 0; transform: translateZ(-100px); }
+  60%  { opacity: 0; transform: translateZ(0); }
+  to { opacity: 100%; transform: translateZ(0); }
 }
 
 @-keyframes overTop {
-  from   { opacity: 0; }
-  60%  { opacity: 0; }
-  to { opacity: 100%; }
+  from   { opacity: 0; transform: translateZ(-100px); }
+  60%  { opacity: 0; transform: translateZ(0); }
+  to { opacity: 100%; transform: translateZ(0); }
 }
 
 @-ms-keyframes overTop {
-  from   { opacity: 0; }
-  60%  { opacity: 0; }
-  to { opacity: 100%; }
+  from   { opacity: 0; transform: translateZ(-100px); }
+  60%  { opacity: 0; transform: translateZ(0); }
+  to { opacity: 100%; transform: translateZ(0); }
 }
 
 html, body {
