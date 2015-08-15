@@ -1,4 +1,4 @@
-# dart-windows
+# Dart for Windows
 Dart installer for Windows
 
 
