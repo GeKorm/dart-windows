@@ -1,6 +1,7 @@
 # Dart for Windows
 Dart installer for Windows
 
+![Installer](https://cloud.githubusercontent.com/assets/6104345/9288758/8b2a9bf6-4360-11e5-9454-bd459ed32f3d.png)
 
 The installer downloads and installs the latest version from the official channels.
 
