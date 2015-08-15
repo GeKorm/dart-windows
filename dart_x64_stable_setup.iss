@@ -3,7 +3,6 @@
 #define MyAppPublisher "Gekorm"
 #define MyAppURL "https://www.dartlang.org/"
 #define MyAppExeName "dart.exe"
-#include <idp.iss>
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -32,7 +31,13 @@ SolidCompression=yes
 ; Tell Windows Explorer to reload the environment
 ChangesEnvironment=yes
 ; Size of files to download:
-ExtraDiskSpaceRequired = 210006813
+ExtraDiskSpaceRequired=210006813
+WizardImageFile=D:\Downloads\Chrome\d skd\dart-logo-wordmark.bmp
+WizardSmallImageFile=D:\Downloads\Chrome\d skd\dart-bird.bmp
+WizardImageStretch=no
+WizardImageBackColor=$fafafa
+
+#include <idp.iss>
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -40,7 +45,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Files]
 Source: "D:\Downloads\Chrome\7za920\7za.exe"; DestDir: {tmp}; Flags: dontcopy
 Source: "{tmp}\dart-sdk\*"; DestDir: "{app}\dart-sdk"; Flags: ignoreversion recursesubdirs createallsubdirs external
-Source: "{code:GetDartiumName}\*"; DestDir: "{app}\dartium"; Flags: ignoreversion recursesubdirs createallsubdirs external
+Source: "{tmp}\temp-dartium\dartium\*"; DestDir: "{app}\dartium"; Flags: ignoreversion recursesubdirs createallsubdirs external
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -76,8 +81,6 @@ end;
 
 procedure InitializeWizard;
 begin
-  // Extract 7za to temp folder
-  ExtractTemporaryFile('7za.exe');
   // Only tell the plugin when we want to start downloading
   // Add the files to the list; at this time, the {app} directory is known
   idpAddFile('https://storage.googleapis.com/dart-archive/channels/stable/release/latest/dartium/dartium-windows-ia32-release.zip', ExpandConstant('{tmp}\dartium.zip'));
@@ -131,12 +134,22 @@ begin
   end;
 end;
 
-function GetDartiumName(Param: String): String;
+function GetDartiumName(Param: string): string;
 var
-  S: string;
-begin;
-  if (TryGetFirstSubfolder(ExpandConstant('{tmp}\' + 'dartium'), S)) then
-    Result := S;
+  B: string;
+begin
+  B := '';
+  if (TryGetFirstSubfolder(ExpandConstant('{tmp}\temp-dartium'), B)) then
+    Result := B;
+    Exit;
+end;
+
+procedure CopyDartium();
+var
+  Y: string;
+  ResultCode: Integer;
+begin
+  Exec(ExpandConstant('{win}\cmd.exe'), 'ROBOCOPY ' + GetDartiumName(Y) + ' ' + ExpandConstant('{tmp}\dartium') + ' /E', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 end;
 
 procedure CurPageChanged(CurPageID: Integer);
@@ -146,6 +159,8 @@ begin
   // If the user just reached the ready page, then...
   if CurPageID = wpInstalling then
   begin
+    // Extract 7za to temp folder
+    ExtractTemporaryFile('7za.exe');
     // Extract the zip to the temp folder (when included in the installer)
     // Skip this, when the file is downloaded with IDP to the temp folder
     // ExtractTemporaryFile('app.zip);
@@ -154,6 +169,16 @@ begin
     DoUnzip(ExpandConstant('{tmp}\') + 'dart-sdk.zip', ExpandConstant('{tmp}'));
 
     // Unzip the Dartium zip in the tempfolder to your temp target path
-    DoUnzip(ExpandConstant('{tmp}\') + 'dartium.zip', ExpandConstant('{tmp}\dartium'));     
+    DoUnzip(ExpandConstant('{tmp}\') + 'dartium.zip', ExpandConstant('{tmp}\temp-dartium'));
+  end;
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  S: string;
+begin
+  if (CurStep = ssInstall) then
+  begin
+    RenameFile(GetDartiumName(S), ExpandConstant('{tmp}\temp-dartium\dartium'));
   end;
 end;
