@@ -183,10 +183,12 @@ a {
 ::selection {
     background-color: rgb(255, 255, 255);
     color: rgb(13, 150, 194);
+    text-shadow: 0 0 0 rgba(0, 0, 0, 0.0);
 }
 ::-moz-selection {
     background-color: rgb(255, 255, 255);
     color: rgb(13, 150, 194);
+    text-shadow: 0 0 0 rgba(0, 0, 0, 0.0);
 }
 
 .dev {
