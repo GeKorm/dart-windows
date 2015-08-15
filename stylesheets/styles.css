@@ -30,27 +30,27 @@ html {
 }
 
 @-webkit-keyframes overTop {
-  from   { opacity: 0; transform: translateZ(-100px); }
-  60%  { opacity: 0; transform: translateZ(0); }
-  to { opacity: 100%; transform: translateZ(0); }
+  from   { opacity: 0; transform: scale(50%); }
+  60%  { opacity: 0; transform: scale(90%); }
+  to { opacity: 100%; transform: scale(100%); }
 }
 
 @-moz-keyframes overTop {
-  from   { opacity: 0; transform: translateZ(-100px); }
-  60%  { opacity: 0; transform: translateZ(0); }
-  to { opacity: 100%; transform: translateZ(0); }
+  from   { opacity: 0; transform: scale(50%); }
+  60%  { opacity: 0; transform: scale(90%); }
+  to { opacity: 100%; transform: scale(100%); }
 }
 
 @-keyframes overTop {
-  from   { opacity: 0; transform: translateZ(-100px); }
-  60%  { opacity: 0; transform: translateZ(0); }
-  to { opacity: 100%; transform: translateZ(0); }
+  from   { opacity: 0; transform: scale(50%); }
+  60%  { opacity: 0; transform: scale(90%); }
+  to { opacity: 100%; transform: scale(100%); }
 }
 
 @-ms-keyframes overTop {
-  from   { opacity: 0; transform: translateZ(-100px); }
-  60%  { opacity: 0; transform: translateZ(0); }
-  to { opacity: 100%; transform: translateZ(0); }
+  from   { opacity: 0; transform: scale(50%); }
+  60%  { opacity: 0; transform: scale(90%); }
+  to { opacity: 100%; transform: scale(100%); }
 }
 
 html, body {
