@@ -26,7 +26,7 @@ html {
     -webkit-animation: overTop 1s forwards;
     -moz-animation: overTop 1s forwards;
     -ms-animation: overTop 1s forwards;
-    animation: overTop 1s infinite;
+    animation: overTop 1s forwards;
 }
 
 @-webkit-keyframes overTop {
