@@ -16,6 +16,7 @@ html, body {
     margin: 0;
     padding: 0;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+    height: 100vh;
 }
 h1 {
     margin-top: 0;
