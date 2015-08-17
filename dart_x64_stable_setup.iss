@@ -19,21 +19,23 @@ AppUpdatesURL={#MyAppURL}
 ArchitecturesInstallIn64BitMode=x64
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
+DisableDirPage=auto
+DisableProgramGroupPage=auto
 AllowNoIcons=yes
-LicenseFile=D:\Downloads\Chrome\d skd\LICENSE.txt
-InfoBeforeFile=D:\Downloads\Chrome\d skd\INFO.txt
-InfoAfterFile=D:\Downloads\Chrome\d skd\AFTER.txt
-OutputDir=D:\Downloads\Chrome\d skd
+LicenseFile=assets\LICENSE.txt
+InfoBeforeFile=assets\INFO.txt
+InfoAfterFile=assets\AFTER.txt
+OutputDir=output
 OutputBaseFilename=Dart_x64 stable setup
-SetupIconFile=D:\Downloads\Chrome\d skd\Twitter-02.ico
+SetupIconFile=assets\Twitter-02.ico
 Compression=lzma
 SolidCompression=yes
 ; Tell Windows Explorer to reload the environment
 ChangesEnvironment=yes
 ; Size of files to download:
 ExtraDiskSpaceRequired=210006813
-WizardImageFile=D:\Downloads\Chrome\d skd\dart-logo-wordmark.bmp
-WizardSmallImageFile=D:\Downloads\Chrome\d skd\dart-bird.bmp
+WizardImageFile=assets\dart-logo-wordmark.bmp
+WizardSmallImageFile=assets\dart-bird.bmp
 WizardImageStretch=no
 WizardImageBackColor=$fafafa
 
