@@ -1,0 +1,3 @@
+This will update Dart to the latest version.
+
+If the latest version is already installed, it will repair the installation.
