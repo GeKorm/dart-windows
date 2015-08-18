@@ -1,7 +1,7 @@
 ; !!!!!!!!! EXECUTABLE TO BE BUNDLED WITH MAIN INSTALLER !!!!!!!!!
 
 #define MyAppName "Dart"
-#define MyAppVersion "dev 64-bit"
+#define MyAppVersion "stable 64-bit"
 #define MyAppPublisher "Gekorm"
 #define MyAppURL "https://www.dartlang.org/"
 #define MyAppExeName "dart.exe"
@@ -31,7 +31,7 @@ DisableWelcomePage=yes
 AllowNoIcons=yes
 InfoBeforeFile=assets\updater\INFO.txt
 InfoAfterFile=assets\updater\AFTER.txt
-OutputDir=bin\updater-dev
+OutputDir=bin\updater-stable
 OutputBaseFilename=Dart Update
 SetupIconFile=assets\dart-icon.ico
 Compression=lzma
@@ -92,8 +92,8 @@ procedure InitializeWizard;
 begin
   // Only tell the plugin when we want to start downloading
   // Add the files to the list; at this time, the {app} directory is known
-  idpAddFile('https://storage.googleapis.com/dart-archive/channels/dev/release/latest/dartium/dartium-windows-ia32-release.zip', ExpandConstant('{tmp}\dartium.zip'));
-  idpAddFile('https://storage.googleapis.com/dart-archive/channels/dev/release/latest/sdk/dartsdk-windows-x64-release.zip', ExpandConstant('{tmp}\dart-sdk.zip'));
+  idpAddFile('https://storage.googleapis.com/dart-archive/channels/stable/release/latest/dartium/dartium-windows-ia32-release.zip', ExpandConstant('{tmp}\dartium.zip'));
+  idpAddFile('https://storage.googleapis.com/dart-archive/channels/stable/release/latest/sdk/dartsdk-windows-x64-release.zip', ExpandConstant('{tmp}\dart-sdk.zip'));
   idpDownloadAfter(wpReady);
 end;
 
