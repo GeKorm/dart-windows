@@ -47,13 +47,14 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
 Source: "assets\7za.exe"; DestDir: {tmp}; Flags: dontcopy
+Source: "bin\updater-stable\Dart Update.exe"; DestDir: "{app}\"; Flags: ignoreversion overwritereadonly
 Source: "assets\dart-icon.ico"; DestDir: "{app}\"; Flags: ignoreversion overwritereadonly
 Source: "{tmp}\dart-sdk\*"; DestDir: "{app}\dart-sdk"; Flags: ignoreversion recursesubdirs createallsubdirs external
 Source: "{tmp}\temp-dartium\dartium\*"; DestDir: "{app}\dartium"; Flags: ignoreversion recursesubdirs createallsubdirs external
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{group}\{#MyAppName} Update"; Filename: "{app}\Dart Update.exe"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 
 [Registry]
