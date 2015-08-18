@@ -2,4 +2,4 @@ Visit the dartlang.org website to learn more about the language, tools, getting 
 
 Browse pub.dartlang.org for more packages and libraries contributed by the community and the Dart team.
 
-To update Dart using this installer, just run the installer again.
+To update Dart using this installer, just run the Dart Update program.
