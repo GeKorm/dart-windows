@@ -52,7 +52,7 @@ WizardImageBackColor=$fafafa
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "D:\Downloads\Chrome\7za920\7za.exe"; DestDir: {tmp}; Flags: dontcopy
+Source: "assets\7za.exe"; DestDir: {tmp}; Flags: dontcopy
 Source: "assets\dart-icon.ico"; DestDir: "{app}\"; Flags: ignoreversion overwritereadonly
 Source: "{tmp}\dart-sdk\*"; DestDir: "{app}\dart-sdk"; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly external
 Source: "{tmp}\temp-dartium\dartium\*"; DestDir: "{app}\dartium"; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly external
