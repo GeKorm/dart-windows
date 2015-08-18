@@ -27,13 +27,14 @@ InfoBeforeFile=assets\INFO.txt
 InfoAfterFile=assets\AFTER.txt
 OutputDir=output
 OutputBaseFilename=Dart_x64 dev setup
-SetupIconFile=assets\Twitter-02.ico
+SetupIconFile=assets\dart-icon.ico
 Compression=lzma
 SolidCompression=yes
 ; Tell Windows Explorer to reload the environment
 ChangesEnvironment=yes
 ; Size of files to download:
 ExtraDiskSpaceRequired=210006813
+UninstallDisplayIcon={app}\dart-icon.ico
 WizardImageFile=assets\dart-logo-wordmark.bmp
 WizardSmallImageFile=assets\dart-bird.bmp
 WizardImageStretch=no
@@ -46,6 +47,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
 Source: "D:\Downloads\Chrome\7za920\7za.exe"; DestDir: {tmp}; Flags: dontcopy
+Source: "assets\dart-icon.ico"; DestDir: "{app}\"; Flags: ignoreversion overwritereadonly
 Source: "{tmp}\dart-sdk\*"; DestDir: "{app}\dart-sdk"; Flags: ignoreversion recursesubdirs createallsubdirs external
 Source: "{tmp}\temp-dartium\dartium\*"; DestDir: "{app}\dartium"; Flags: ignoreversion recursesubdirs createallsubdirs external
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
