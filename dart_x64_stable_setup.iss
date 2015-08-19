@@ -50,7 +50,7 @@ Source: "assets\7za.exe"; DestDir: "{tmp}\"; Flags: dontcopy
 Source: "bin\updater-stable\Dart Update.exe"; DestDir: "{app}\"; Flags: ignoreversion overwritereadonly
 Source: "assets\dart-icon.ico"; DestDir: "{app}\"; Flags: ignoreversion overwritereadonly
 Source: "{tmp}\dart-sdk\*"; DestDir: "{app}\dart-sdk"; Flags: ignoreversion recursesubdirs createallsubdirs external
-Source: "{tmp}\temp-dartium\dartium\*"; DestDir: "{app}\dartium"; Flags: ignoreversion recursesubdirs createallsubdirs external
+Source: "{tmp}\temp-dartium\chromium\*"; DestDir: "{app}\chromium"; Flags: ignoreversion recursesubdirs createallsubdirs external
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -154,7 +154,7 @@ var
   Y: string;
   ResultCode: Integer;
 begin
-  Exec(ExpandConstant('{win}\cmd.exe'), 'ROBOCOPY ' + GetDartiumName(Y) + ' ' + ExpandConstant('{tmp}\dartium') + ' /E', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+  Exec(ExpandConstant('{win}\cmd.exe'), 'ROBOCOPY ' + GetDartiumName(Y) + ' ' + ExpandConstant('{tmp}\chromium') + ' /E', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 end;
 
 procedure CurPageChanged(CurPageID: Integer);
@@ -184,6 +184,8 @@ var
 begin
   if (CurStep = ssInstall) then
   begin
-    RenameFile(GetDartiumName(S), ExpandConstant('{tmp}\temp-dartium\dartium'));
+    RenameFile(GetDartiumName(S), ExpandConstant('{tmp}\temp-dartium\chromium'));
+    if DirExists(ExpandConstant('{app}\dartium')) then
+      RenameFile(ExpandConstant('{app}\dartium'), ExpandConstant('{app}\chromium'));
   end;
 end;
