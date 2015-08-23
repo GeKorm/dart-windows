@@ -25,7 +25,7 @@ DisableDirPage=yes
 DisableFinishedPage=yes  
 DisableProgramGroupPage=yes
 DisableReadyMemo=yes
-DisableReadyPage=yes
+DisableReadyPage=no
 DisableStartupPrompt=yes
 DisableWelcomePage=yes
 AllowNoIcons=yes
@@ -65,27 +65,76 @@ Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}\dart-sdk\bin"; Check: NeedsAddPath('{app}\dart-sdk\bin')
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: expandsz; ValueName: "DART_SDK"; ValueData: "{app}\dart-sdk";
 
+[Messages]
+SetupAppTitle = Update {#MyAppName}
+SetupWindowTitle = Update {#MyAppName}
+ExitSetupTitle = Exit Update
+ExitSetupMessage = Update is not complete. If you exit now, Dart will not be updated.%n%nYou may run Dart Update again at another time to complete the installation.%n%nExit Update?
+
 [Code]
+// Download text file
+
+function DownloadTextFile(const AURL: string; var AResponse: string): Boolean;
+var
+  WinHttpRequest: Variant;
+begin
+  Result := TRUE;
+  try
+    WinHttpRequest := CreateOleObject('WinHttp.WinHttpRequest.5.1');
+    WinHttpRequest.Open('GET', AURL, FALSE);
+    WinHttpRequest.Send;
+    AResponse := WinHttpRequest.ResponseText;
+  except
+    Result := FALSE;
+    AResponse := GetExceptionMessage;
+  end;
+end;
+
 // SO: http://stackoverflow.com/questions/3304463/
-function NeedsAddPath(Param: string): boolean;
+function NeedsAddPath(Param: string): Boolean;
 var
   OrigPath: string;
   ParamExpanded: string;
 begin
   // Expand the setup constants like {app} from Param
   ParamExpanded := ExpandConstant(Param);
-  if not RegQueryStringValue(HKEY_LOCAL_MACHINE,
-    'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
-    'Path', OrigPath)
-  then begin
-    Result := True;
-    exit;
+  if not RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment', 'Path', OrigPath) then 
+  begin
+    Result := TRUE;
+    Exit;
   end;
   // Look for the path with leading and trailing semicolon and with or without \ ending
   // Pos() returns 0 if not found
   Result := Pos(';' + UpperCase(ParamExpanded) + ';', ';' + UpperCase(OrigPath) + ';') = 0;  
-  if Result = True then
-     Result := Pos(';' + UpperCase(ParamExpanded) + '\;', ';' + UpperCase(OrigPath) + ';') = 0; 
+  if Result = TRUE then
+    Result := Pos(';' + UpperCase(ParamExpanded) + '\;', ';' + UpperCase(OrigPath) + ';') = 0; 
+end;
+
+function GetCurRevision(Param: string): string;
+var
+  FormattedRevision: string;
+  Index: Integer;
+begin
+  FormattedRevision := Param;
+  Index := Pos('revision', Param);
+  Index := Index +11;
+  Delete(FormattedRevision, 1, Index);
+  Index := Pos('"', FormattedRevision);
+  Delete(FormattedRevision, Index, 4); 
+  Result := FormattedRevision;
+  Exit;
+end;
+
+function GetInsRevision(PathToApp: string): string;
+var
+  FormattedRevision: string;
+  Index: Integer;
+  RevisionFile: string;
+begin
+  LoadStringFromFile(PathToApp + 'dart-sdk\revision', FormattedRevision);
+  FormattedRevision := Trim(FormattedRevision);
+  Log('The final Ins Rev is: ' + FormattedRevision);  
+  Result := FormattedRevision;
 end;
 
 procedure InitializeWizard;
@@ -97,26 +146,26 @@ begin
   idpDownloadAfter(wpReady);
 end;
 
-procedure DoUnzip(source: String; targetdir: String);
+procedure DoUnzip(Source: string; targetdir: string);
 var 
-  unzipTool: String;
+  unzipTool: string;
   ReturnCode: Integer;
 begin
   // Source contains tmp constant, so resolve it to path name
-  source := ExpandConstant(source);
+  Source := ExpandConstant(Source);
 
   unzipTool := ExpandConstant('{tmp}\7za.exe');
 
-  if not FileExists(unzipTool)
-  then MsgBox('UnzipTool not found: ' + unzipTool, mbError, MB_OK)
-  else if not FileExists(source)
-  then MsgBox('File was not found while trying to unzip: ' + source, mbError, MB_OK)
-  else begin
-       if Exec(unzipTool, ' x "' + source + '" -o"' + targetdir + '" -y',
-               '', SW_HIDE, ewWaitUntilTerminated, ReturnCode) = false
-       then begin
-           MsgBox('Unzip failed:' + source, mbError, MB_OK);
-       end;
+  if not FileExists(unzipTool) then 
+    MsgBox('UnzipTool not found: ' + unzipTool, mbError, MB_OK)
+  else if not FileExists(Source) then 
+    MsgBox('File was not found while trying to unzip: ' + Source, mbError, MB_OK)
+  else 
+  begin
+    if Exec(unzipTool, ' x "' + Source + '" -o"' + targetdir + '" -y', '', SW_HIDE, ewWaitUntilTerminated, ReturnCode) = FALSE then 
+    begin
+      MsgBox('Unzip failed:' + Source, mbError, MB_OK);
+    end;
   end;
 end;
 
@@ -125,22 +174,20 @@ var
   S: string;
   FindRec: TFindRec;
 begin
-  Result := False;
+  Result := FALSE;
   if FindFirst(ExpandConstant(AddBackslash(Path) + '*'), FindRec) then
-  try
-    repeat
-      if (FindRec.Attributes and FILE_ATTRIBUTE_DIRECTORY <> 0) and
-        (FindRec.Name <> '.') and (FindRec.Name <> '..') then
-      begin
-        Result := True;
-        Folder := AddBackslash(Path) + FindRec.Name;
-        Exit;
-      end;
-    until
-      not FindNext(FindRec);
-  finally
-    FindClose(FindRec);
-  end;
+    try
+      repeat
+        if (FindRec.Attributes and FILE_ATTRIBUTE_DIRECTORY <> 0) and (FindRec.Name <> '.') and (FindRec.Name <> '..') then
+        begin
+          Result := TRUE;
+          Folder := AddBackslash(Path) + FindRec.Name;
+          Exit;
+        end;
+      until not FindNext(FindRec);
+    finally
+      FindClose(FindRec);
+    end;
 end;
 
 function GetDartiumName(Param: string): string;
@@ -150,7 +197,7 @@ begin
   B := '';
   if (TryGetFirstSubfolder(ExpandConstant('{tmp}\temp-dartium'), B)) then
     Result := B;
-    Exit;
+  Exit;
 end;
 
 procedure CopyDartium();
@@ -161,11 +208,35 @@ begin
   Exec(ExpandConstant('{win}\cmd.exe'), 'ROBOCOPY ' + GetDartiumName(Y) + ' ' + ExpandConstant('{tmp}\chromium') + ' /E', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 end;
 
-procedure CurPageChanged(CurPageID: Integer);
+procedure CurPageChanged(CurPageID: Integer); 
 var
+  SilUpdate: string;
+  Current: string;
+  Installed: string;
   S: string;
 begin
-  // If the user just reached the ready page, then...
+  // If the user just reached the Ready page, then...
+  if CurPageID = wpReady then
+  begin
+    if DownloadTextFile('https://storage.googleapis.com/dart-archive/channels/dev/release/latest/VERSION', SilUpdate) then
+    // Download VERSION text file
+    begin
+      // Version fetched
+      // Read the file and transform the String to: int.int.int. ... .int
+      Current := GetCurRevision(SilUpdate);
+      Installed := GetInsRevision(ExpandConstant('{app}\'));
+      if (Installed = Current) then 
+      begin
+        // Dart is up to date
+        MsgBox('Dart is up to date!', mbInformation, MB_OK);
+        WizardForm.Close;
+      end
+    end
+    else 
+      // Failed to fetch resource
+      MsgBox(SilUpdate, mbError, MB_OK);
+  end;
+  // If the user just reached the Installing page, then...
   if CurPageID = wpInstalling then
   begin
     // Extract 7za to temp folder
@@ -190,4 +261,10 @@ begin
   begin
     RenameFile(GetDartiumName(S), ExpandConstant('{tmp}\temp-dartium\chromium'));
   end;
+end;
+
+procedure CancelButtonClick(CurPageID: Integer; var Cancel, Confirm: Boolean);
+begin
+  if CurPageID = wpReady then
+    Confirm := FALSE;
 end;
