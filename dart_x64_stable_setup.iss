@@ -63,7 +63,8 @@ Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environmen
 
 [Code]
 // SO: http://stackoverflow.com/questions/3304463/
-function NeedsAddPath(Param: string): boolean;
+
+function NeedsAddPath(Param: string): Boolean;
 var
   OrigPath: string;
   ParamExpanded: string;
@@ -72,16 +73,16 @@ begin
   ParamExpanded := ExpandConstant(Param);
   if not RegQueryStringValue(HKEY_LOCAL_MACHINE,
     'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
-    'Path', OrigPath)
-  then begin
-    Result := True;
-    exit;
+    'Path', OrigPath) then 
+  begin
+    Result := TRUE;
+    Exit;
   end;
   // Look for the path with leading and trailing semicolon and with or without \ ending
   // Pos() returns 0 if not found
   Result := Pos(';' + UpperCase(ParamExpanded) + ';', ';' + UpperCase(OrigPath) + ';') = 0;  
-  if Result = True then
-     Result := Pos(';' + UpperCase(ParamExpanded) + '\;', ';' + UpperCase(OrigPath) + ';') = 0; 
+  if Result = TRUE then
+    Result := Pos(';' + UpperCase(ParamExpanded) + '\;', ';' + UpperCase(OrigPath) + ';') = 0; 
 end;
 
 procedure InitializeWizard;
@@ -93,26 +94,27 @@ begin
   idpDownloadAfter(wpReady);
 end;
 
-procedure DoUnzip(source: String; targetdir: String);
+procedure DoUnzip(Source: string; targetdir: string);
 var 
-  unzipTool: String;
+  unzipTool: string;
   ReturnCode: Integer;
 begin
   // Source contains tmp constant, so resolve it to path name
-  source := ExpandConstant(source);
+  Source := ExpandConstant(Source);
 
   unzipTool := ExpandConstant('{tmp}\7za.exe');
 
-  if not FileExists(unzipTool)
-  then MsgBox('UnzipTool not found: ' + unzipTool, mbError, MB_OK)
-  else if not FileExists(source)
-  then MsgBox('File was not found while trying to unzip: ' + source, mbError, MB_OK)
-  else begin
-       if Exec(unzipTool, ' x "' + source + '" -o"' + targetdir + '" -y',
-               '', SW_HIDE, ewWaitUntilTerminated, ReturnCode) = false
-       then begin
-           MsgBox('Unzip failed:' + source, mbError, MB_OK);
-       end;
+  if not FileExists(unzipTool) then 
+    MsgBox('UnzipTool not found: ' + unzipTool, mbError, MB_OK)
+  else if not FileExists(Source) then 
+    MsgBox('File was not found while trying to unzip: ' + Source, mbError, MB_OK)
+  else 
+  begin
+    if Exec(unzipTool, ' x "' + Source + '" -o"' + targetdir + '" -y',
+      '', SW_HIDE, ewWaitUntilTerminated, ReturnCode) = FALSE then 
+    begin
+      MsgBox('Unzip failed:' + Source, mbError, MB_OK);
+    end;
   end;
 end;
 
@@ -121,22 +123,21 @@ var
   S: string;
   FindRec: TFindRec;
 begin
-  Result := False;
+  Result := FALSE;
   if FindFirst(ExpandConstant(AddBackslash(Path) + '*'), FindRec) then
-  try
-    repeat
-      if (FindRec.Attributes and FILE_ATTRIBUTE_DIRECTORY <> 0) and
-        (FindRec.Name <> '.') and (FindRec.Name <> '..') then
-      begin
-        Result := True;
-        Folder := AddBackslash(Path) + FindRec.Name;
-        Exit;
-      end;
-    until
-      not FindNext(FindRec);
-  finally
-    FindClose(FindRec);
-  end;
+    try
+      repeat
+        if (FindRec.Attributes and FILE_ATTRIBUTE_DIRECTORY <> 0) and
+          (FindRec.Name <> '.') and (FindRec.Name <> '..') then
+        begin
+          Result := TRUE;
+          Folder := AddBackslash(Path) + FindRec.Name;
+          Exit;
+        end;
+      until not FindNext(FindRec);
+    finally
+      FindClose(FindRec);
+    end;
 end;
 
 function GetDartiumName(Param: string): string;
@@ -146,7 +147,7 @@ begin
   B := '';
   if (TryGetFirstSubfolder(ExpandConstant('{tmp}\temp-dartium'), B)) then
     Result := B;
-    Exit;
+  Exit;
 end;
 
 procedure CopyDartium();
