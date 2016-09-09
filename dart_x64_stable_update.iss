@@ -122,11 +122,9 @@ end;
 
 procedure InitializeWizard;
 begin
-  // Only tell the plugin when we want to start downloading
-  // Add the files to the list; at this time, the {app} directory is known
-  idpAddFile('https://storage.googleapis.com/dart-archive/channels/stable/release/latest/dartium/dartium-windows-ia32-release.zip', ExpandConstant('{tmp}\dartium.zip'));
-  idpAddFile('https://storage.googleapis.com/dart-archive/channels/stable/release/latest/sdk/dartsdk-windows-x64-release.zip', ExpandConstant('{tmp}\dart-sdk.zip'));
-  idpDownloadAfter(wpReady);
+	// Download version file at welcome screen to check version.
+  idpAddFile('https://storage.googleapis.com/dart-archive/channels/stable/release/latest/VERSION',ExpandConstant('{tmp}\VERSION'));
+	idpDownloadAfter(wpWelcome);
 end;
 
 procedure DoUnzip(Source: string; targetdir: string);
@@ -201,8 +199,7 @@ begin
   // If the user just reached the Ready page, then...
   if CurPageID = wpReady then
   begin
-    // Download VERSION text file
-    idpDownloadFile('https://storage.googleapis.com/dart-archive/channels/stable/release/latest/VERSION',ExpandConstant('{tmp}\VERSION'));
+    // Read version from VERSION file
     if LoadStringFromFile(ExpandConstant('{tmp}\VERSION'), SilUpdate) then
     begin
       // Version fetched
@@ -215,6 +212,11 @@ begin
         MsgBox('Dart is up to date!', mbInformation, MB_OK);
         WizardForm.Close;
       end
+      // Only tell the plugin when we want to start downloading
+      // Add the files to the list; at this time, the {app} directory is known
+      idpAddFile('https://storage.googleapis.com/dart-archive/channels/stable/release/latest/dartium/dartium-windows-ia32-release.zip', ExpandConstant('{tmp}\dartium.zip'));
+      idpAddFile('https://storage.googleapis.com/dart-archive/channels/stable/release/latest/sdk/dartsdk-windows-x64-release.zip', ExpandConstant('{tmp}\dart-sdk.zip'));
+      idpDownloadAfter(wpReady);
     end
     else 
       // Failed to fetch resource
