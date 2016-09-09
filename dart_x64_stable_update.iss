@@ -72,23 +72,6 @@ ExitSetupTitle = Exit Update
 ExitSetupMessage = Update is not complete. If you exit now, Dart will not be updated.%n%nYou may run Dart Update again at another time to complete the installation.%n%nExit Update?
 
 [Code]
-// Download text file
-
-function DownloadTextFile(const AURL: string; var AResponse: string): Boolean;
-var
-  WinHttpRequest: Variant;
-begin
-  Result := TRUE;
-  try
-    WinHttpRequest := CreateOleObject('WinHttp.WinHttpRequest.5.1');
-    WinHttpRequest.Open('GET', AURL, FALSE);
-    WinHttpRequest.Send;
-    AResponse := WinHttpRequest.ResponseText;
-  except
-    Result := FALSE;
-    AResponse := GetExceptionMessage;
-  end;
-end;
 
 // SO: http://stackoverflow.com/questions/3304463/
 function NeedsAddPath(Param: string): Boolean;
@@ -218,8 +201,9 @@ begin
   // If the user just reached the Ready page, then...
   if CurPageID = wpReady then
   begin
-    if DownloadTextFile('https://storage.googleapis.com/dart-archive/channels/stable/release/latest/VERSION', SilUpdate) then
     // Download VERSION text file
+    idpDownloadFile('https://storage.googleapis.com/dart-archive/channels/stable/release/latest/VERSION',ExpandConstant('{tmp}\VERSION'));
+    if LoadStringFromFile(ExpandConstant('{tmp}\VERSION'), SilUpdate) then
     begin
       // Version fetched
       // Read the file and transform the String to: int.int.int. ... .int
