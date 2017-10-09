@@ -72,23 +72,6 @@ ExitSetupTitle = Exit Update
 ExitSetupMessage = Update is not complete. If you exit now, Dart will not be updated.%n%nYou may run Dart Update again at another time to complete the installation.%n%nExit Update?
 
 [Code]
-// Download text file
-
-function DownloadTextFile(const AURL: string; var AResponse: string): Boolean;
-var
-  WinHttpRequest: Variant;
-begin
-  Result := TRUE;
-  try
-    WinHttpRequest := CreateOleObject('WinHttp.WinHttpRequest.5.1');
-    WinHttpRequest.Open('GET', AURL, FALSE);
-    WinHttpRequest.Send;
-    AResponse := WinHttpRequest.ResponseText;
-  except
-    Result := FALSE;
-    AResponse := GetExceptionMessage;
-  end;
-end;
 
 // SO: http://stackoverflow.com/questions/3304463/
 function NeedsAddPath(Param: string): Boolean;
@@ -139,11 +122,9 @@ end;
 
 procedure InitializeWizard;
 begin
-  // Only tell the plugin when we want to start downloading
-  // Add the files to the list; at this time, the {app} directory is known
-  idpAddFile('https://storage.googleapis.com/dart-archive/channels/dev/release/latest/dartium/dartium-windows-ia32-release.zip', ExpandConstant('{tmp}\dartium.zip'));
-  idpAddFile('https://storage.googleapis.com/dart-archive/channels/dev/release/latest/sdk/dartsdk-windows-x64-release.zip', ExpandConstant('{tmp}\dart-sdk.zip'));
-  idpDownloadAfter(wpReady);
+  // Download version file at welcome screen to check version.
+  idpAddFile('https://storage.googleapis.com/dart-archive/channels/dev/release/latest/VERSION',ExpandConstant('{tmp}\VERSION'));
+  idpDownloadAfter(wpWelcome);
 end;
 
 procedure DoUnzip(Source: string; targetdir: string);
@@ -217,9 +198,9 @@ var
 begin
   // If the user just reached the Ready page, then...
   if CurPageID = wpReady then
-  begin
-    if DownloadTextFile('https://storage.googleapis.com/dart-archive/channels/dev/release/latest/VERSION', SilUpdate) then
-    // Download VERSION text file
+  begin      
+    // Read version from VERSION file
+    if LoadStringFromFile(ExpandConstant('{tmp}\VERSION'), SilUpdate) then
     begin
       // Version fetched
       // Read the file and transform the String to: int.int.int. ... .int
@@ -231,6 +212,11 @@ begin
         MsgBox('Dart is up to date!', mbInformation, MB_OK);
         WizardForm.Close;
       end
+      // Only tell the plugin when we want to start downloading
+      // Add the files to the list; at this time, the {app} directory is known
+      idpAddFile('https://storage.googleapis.com/dart-archive/channels/dev/release/latest/dartium/dartium-windows-ia32-release.zip', ExpandConstant('{tmp}\dartium.zip'));
+      idpAddFile('https://storage.googleapis.com/dart-archive/channels/dev/release/latest/sdk/dartsdk-windows-x64-release.zip', ExpandConstant('{tmp}\dart-sdk.zip'));
+      idpDownloadAfter(wpReady);
     end
     else 
       // Failed to fetch resource
