@@ -4,7 +4,7 @@
 Download and install the following programs:
 
 * [Inno Setup](http://www.jrsoftware.org/isdl.php)
-* [Inno Download Plugin](https://code.google.com/p/inno-download-plugin/) (check the "*Add IDP include path to ISPPBuiltins.iss*" option during installation)
+* [Inno Download Plugin](https://bitbucket.org/mitrich_k/inno-download-plugin/downloads/) (check the "*Add IDP include path to ISPPBuiltins.iss*" option during installation)
 
 ### 2. File structure
 Download and extract this repository. Paths in the .iss files are relative, so altering the structure
