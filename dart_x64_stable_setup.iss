@@ -61,6 +61,9 @@ Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}\dart-sdk\bin"; Check: NeedsAddPath('{app}\dart-sdk\bin')
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: expandsz; ValueName: "DART_SDK"; ValueData: "{app}\dart-sdk";
 
+[CustomMessages]
+DartLatestVersion=The latest stable version will be installed: %1
+
 [Code]
 // SO: http://stackoverflow.com/questions/3304463/
 
@@ -85,10 +88,31 @@ begin
     Result := Pos(';' + UpperCase(ParamExpanded) + '\;', ';' + UpperCase(OrigPath) + ';') = 0; 
 end;
 
+// Internet latest version
+function GetCurVersion(Param: string): string;
+var
+  FormattedRevision: string;
+  Index: Integer;
+begin
+  FormattedRevision := Param;
+  Index := Pos('version', Param);
+  Index := Index +11;
+  Delete(FormattedRevision, 1, Index - 1);
+  Index := Pos('"', FormattedRevision);
+  Delete(FormattedRevision, Index, 4);
+  Index := Pos('"', FormattedRevision);
+  Delete(FormattedRevision, Index, 400); 
+  Result := FormattedRevision;
+  Exit;
+end;
+
 procedure InitializeWizard;
 begin
   // Only tell the plugin when we want to start downloading
   // Add the files to the list; at this time, the {app} directory is known
+  idpSetOption('ConnectTimeout', '90000');
+  idpSetOption('SendTimeout', '90000');
+  idpSetOption('ReceiveTimeout', '90000');
   idpAddFile('https://storage.googleapis.com/dart-archive/channels/stable/release/latest/dartium/dartium-windows-ia32-release.zip', ExpandConstant('{tmp}\dartium.zip'));
   idpAddFile('https://storage.googleapis.com/dart-archive/channels/stable/release/latest/sdk/dartsdk-windows-x64-release.zip', ExpandConstant('{tmp}\dart-sdk.zip'));
   idpDownloadAfter(wpReady);
@@ -161,8 +185,44 @@ end;
 procedure CurPageChanged(CurPageID: Integer);
 var
   S: string;
+  SilUpdate: string;
+  CurrentVersion: string;
+  Page: TWizardPage;
+  LatestLabel: TNewStaticText;
 begin
-  // If the user just reached the ready page, then...
+  // If the user just reached the installing page, then...
+  if CurPageID = wpInstalling then
+  begin
+    // Extract 7za to temp folder
+    ExtractTemporaryFile('7za.exe');
+    // Extract the zip to the temp folder (when included in the installer)
+    // Skip this, when the file is downloaded with IDP to the temp folder
+    // ExtractTemporaryFile('app.zip);
+
+    // Unzip the Dart SDK zip in the tempfolder to your temp target path
+    DoUnzip(ExpandConstant('{tmp}\') + 'dart-sdk.zip', ExpandConstant('{tmp}'));
+
+    // Unzip the Dartium zip in the tempfolder to your temp target path
+    DoUnzip(ExpandConstant('{tmp}\') + 'dartium.zip', ExpandConstant('{tmp}\temp-dartium'));
+  end;
+    // If the user just reached the Ready page, then...
+  if CurPageID = wpReady then
+  begin
+    // Download VERSION text file
+    if idpDownloadFile('https://storage.googleapis.com/dart-archive/channels/stable/release/latest/VERSION', ExpandConstant('{tmp}\VERSION.txt')) then
+    begin
+      // Version fetched
+      // Read the file
+      LoadStringFromFile(ExpandConstant('{tmp}\VERSION.txt'), SilUpdate);
+      CurrentVersion := GetCurVersion(SilUpdate);
+      Page := PageFromID(wpReady);
+      LatestLabel := TNewStaticText.Create(WizardForm);
+      LatestLabel.Parent := Page.Surface;
+      LatestLabel.Caption := FmtMessage(CustomMessage('DartLatestVersion'), [CurrentVersion]);
+      WizardForm.ReadyLabel.Top := LatestLabel.Top + WizardForm.ReadyLabel.Height + 16;
+    end
+  end;
+  // If the user just reached the Installing page, then...
   if CurPageID = wpInstalling then
   begin
     // Extract 7za to temp folder

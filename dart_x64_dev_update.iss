@@ -71,25 +71,11 @@ SetupWindowTitle = Update {#MyAppName}
 ExitSetupTitle = Exit Update
 ExitSetupMessage = Update is not complete. If you exit now, Dart will not be updated.%n%nYou may run Dart Update again at another time to complete the installation.%n%nExit Update?
 
+[CustomMessages]
+DartInstalledVersion=Installed version: %1
+DartLatestVersion=Latest (dev) version: %1
+
 [Code]
-// Download text file
-
-function DownloadTextFile(const AURL: string; var AResponse: string): Boolean;
-var
-  WinHttpRequest: Variant;
-begin
-  Result := TRUE;
-  try
-    WinHttpRequest := CreateOleObject('WinHttp.WinHttpRequest.5.1');
-    WinHttpRequest.Open('GET', AURL, FALSE);
-    WinHttpRequest.Send;
-    AResponse := WinHttpRequest.ResponseText;
-  except
-    Result := FALSE;
-    AResponse := GetExceptionMessage;
-  end;
-end;
-
 // SO: http://stackoverflow.com/questions/3304463/
 function NeedsAddPath(Param: string): Boolean;
 var
@@ -110,6 +96,7 @@ begin
     Result := Pos(';' + UpperCase(ParamExpanded) + '\;', ';' + UpperCase(OrigPath) + ';') = 0; 
 end;
 
+// Internet latest revision
 function GetCurRevision(Param: string): string;
 var
   FormattedRevision: string;
@@ -125,6 +112,7 @@ begin
   Exit;
 end;
 
+// Installed revision
 function GetInsRevision(PathToApp: string): string;
 var
   FormattedRevision: string;
@@ -137,10 +125,44 @@ begin
   Result := FormattedRevision;
 end;
 
+// Internet latest version
+function GetCurVersion(Param: string): string;
+var
+  FormattedRevision: string;
+  Index: Integer;
+begin
+  FormattedRevision := Param;
+  Index := Pos('version', Param);
+  Index := Index +11;
+  Delete(FormattedRevision, 1, Index - 1);
+  Index := Pos('"', FormattedRevision);
+  Delete(FormattedRevision, Index, 4);
+  Index := Pos('"', FormattedRevision);
+  Delete(FormattedRevision, Index, 400); 
+  Result := FormattedRevision;
+  Exit;
+end;
+
+// Installed version
+function GetInsVersion(PathToApp: string): string;
+var
+  FormattedRevision: string;
+  Index: Integer;
+  RevisionFile: string;
+begin
+  LoadStringFromFile(PathToApp + 'dart-sdk\version', FormattedRevision);
+  FormattedRevision := Trim(FormattedRevision);
+  Log('The final Ins Ver is: ' + FormattedRevision);  
+  Result := FormattedRevision;
+end;
+
 procedure InitializeWizard;
 begin
   // Only tell the plugin when we want to start downloading
   // Add the files to the list; at this time, the {app} directory is known
+  idpSetOption('ConnectTimeout', '90000');
+  idpSetOption('SendTimeout', '90000');
+  idpSetOption('ReceiveTimeout', '90000');
   idpAddFile('https://storage.googleapis.com/dart-archive/channels/dev/release/latest/dartium/dartium-windows-ia32-release.zip', ExpandConstant('{tmp}\dartium.zip'));
   idpAddFile('https://storage.googleapis.com/dart-archive/channels/dev/release/latest/sdk/dartsdk-windows-x64-release.zip', ExpandConstant('{tmp}\dart-sdk.zip'));
   idpDownloadAfter(wpReady);
@@ -213,23 +235,43 @@ var
   SilUpdate: string;
   Current: string;
   Installed: string;
+  CurrentVersion: string;
+  InstalledVersion: string;
   S: string;
+  Page: TWizardPage;
+  InstalledLabel: TNewStaticText;
+  LatestLabel: TNewStaticText;
 begin
   // If the user just reached the Ready page, then...
   if CurPageID = wpReady then
   begin
-    if DownloadTextFile('https://storage.googleapis.com/dart-archive/channels/dev/release/latest/VERSION', SilUpdate) then
     // Download VERSION text file
+    if idpDownloadFile('https://storage.googleapis.com/dart-archive/channels/dev/release/latest/VERSION', ExpandConstant('{tmp}\VERSION.txt')) then
     begin
       // Version fetched
       // Read the file and transform the String to: int.int.int. ... .int
+      LoadStringFromFile(ExpandConstant('{tmp}\VERSION.txt'), SilUpdate);
       Current := GetCurRevision(SilUpdate);
       Installed := GetInsRevision(ExpandConstant('{app}\'));
+      CurrentVersion := GetCurVersion(SilUpdate);
+      InstalledVersion := GetInsVersion(ExpandConstant('{app}\'));
       if (Installed = Current) then 
       begin
         // Dart is up to date
         MsgBox('Dart is up to date!', mbInformation, MB_OK);
         WizardForm.Close;
+      end
+      else
+      begin
+        Page := PageFromID(wpReady);
+        InstalledLabel := TNewStaticText.Create(WizardForm);
+        InstalledLabel.Parent := Page.Surface;
+        InstalledLabel.Caption := FmtMessage(CustomMessage('DartInstalledVersion'), [InstalledVersion]);
+        LatestLabel := TNewStaticText.Create(WizardForm);
+        LatestLabel.Parent := Page.Surface;
+        LatestLabel.Caption := FmtMessage(CustomMessage('DartLatestVersion'), [CurrentVersion]);
+        LatestLabel.Top := InstalledLabel.Top + LatestLabel.Height + 4;
+        WizardForm.ReadyLabel.Top := LatestLabel.Top + WizardForm.ReadyLabel.Height + 16;
       end
     end
     else 
