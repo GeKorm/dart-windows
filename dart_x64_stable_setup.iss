@@ -219,7 +219,14 @@ begin
       LatestLabel := TNewStaticText.Create(WizardForm);
       LatestLabel.Parent := Page.Surface;
       LatestLabel.Caption := FmtMessage(CustomMessage('DartLatestVersion'), [CurrentVersion]);
-      WizardForm.ReadyLabel.Top := LatestLabel.Top + WizardForm.ReadyLabel.Height + 16;
+      if Wizardform.ReadyMemo.Lines.Count > 0 then
+      begin
+        WizardForm.ReadyLabel.Caption := '';
+      end
+      else
+      begin
+        WizardForm.ReadyLabel.Top := LatestLabel.Top + WizardForm.ReadyLabel.Height + 16;
+      end
     end
   end;
   // If the user just reached the Installing page, then...
