@@ -54,7 +54,6 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Source: "assets\7za.exe"; DestDir: {tmp}; Flags: dontcopy
 Source: "assets\dart-icon.ico"; DestDir: "{app}\"; Flags: ignoreversion overwritereadonly
 Source: "{tmp}\dart-sdk\*"; DestDir: "{app}\dart-sdk"; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly external
-Source: "{tmp}\temp-dartium\chromium\*"; DestDir: "{app}\chromium"; Flags: ignoreversion recursesubdirs createallsubdirs overwritereadonly external
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -162,7 +161,6 @@ begin
   idpSetOption('ConnectTimeout', '90000');
   idpSetOption('SendTimeout', '90000');
   idpSetOption('ReceiveTimeout', '90000');
-  idpAddFile('https://storage.googleapis.com/dart-archive/channels/stable/release/latest/dartium/dartium-windows-ia32-release.zip', ExpandConstant('{tmp}\dartium.zip'));
   idpAddFile('https://storage.googleapis.com/dart-archive/channels/stable/release/latest/sdk/dartsdk-windows-x64-release.zip', ExpandConstant('{tmp}\dart-sdk.zip'));
   idpDownloadAfter(wpReady);
 end;
@@ -209,24 +207,6 @@ begin
     finally
       FindClose(FindRec);
     end;
-end;
-
-function GetDartiumName(Param: string): string;
-var
-  B: string;
-begin
-  B := '';
-  if (TryGetFirstSubfolder(ExpandConstant('{tmp}\temp-dartium'), B)) then
-    Result := B;
-  Exit;
-end;
-
-procedure CopyDartium();
-var
-  Y: string;
-  ResultCode: Integer;
-begin
-  Exec(ExpandConstant('{win}\cmd.exe'), 'ROBOCOPY ' + GetDartiumName(Y) + ' ' + ExpandConstant('{tmp}\chromium') + ' /E', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 end;
 
 procedure CurPageChanged(CurPageID: Integer); 
@@ -289,18 +269,6 @@ begin
     // Unzip the Dart SDK zip in the tempfolder to your temp target path
     DoUnzip(ExpandConstant('{tmp}\') + 'dart-sdk.zip', ExpandConstant('{tmp}'));
 
-    // Unzip the Dartium zip in the tempfolder to your temp target path
-    DoUnzip(ExpandConstant('{tmp}\') + 'dartium.zip', ExpandConstant('{tmp}\temp-dartium'));
-  end;
-end;
-
-procedure CurStepChanged(CurStep: TSetupStep);
-var
-  S: string;
-begin
-  if (CurStep = ssInstall) then
-  begin
-    RenameFile(GetDartiumName(S), ExpandConstant('{tmp}\temp-dartium\chromium'));
   end;
 end;
 
