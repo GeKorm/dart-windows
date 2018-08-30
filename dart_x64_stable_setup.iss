@@ -36,9 +36,8 @@ ChangesEnvironment=yes
 ExtraDiskSpaceRequired=210006813
 UninstallDisplayIcon={app}\dart-icon.ico
 WizardImageFile=assets\dart-logo-wordmark.bmp
-WizardSmallImageFile=assets\dart-bird.bmp
+WizardSmallImageFile=assets\dart-small.bmp
 WizardImageStretch=no
-WizardImageBackColor=$fafafa
 
 #include <idp.iss>
 
