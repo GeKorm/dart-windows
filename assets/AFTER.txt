@@ -1,4 +1,4 @@
-Visit the dartlang.org website to learn more about the language, tools, getting started, and more.
+Visit the dartlang.org website to learn more about the language, tools, and how to get started with Dart.
 
 Browse pub.dartlang.org for more packages and libraries contributed by the community and the Dart team.
 
