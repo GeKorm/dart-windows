@@ -33,7 +33,7 @@ SolidCompression=yes
 ; Tell Windows Explorer to reload the environment
 ChangesEnvironment=yes
 ; Size of files to download:
-ExtraDiskSpaceRequired=210006813
+ExtraDiskSpaceRequired=409994662
 UninstallDisplayIcon={app}\dart-icon.ico
 WizardImageFile=assets\dart-logo-wordmark.bmp
 WizardSmallImageFile=assets\dart-small.bmp
